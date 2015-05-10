@@ -1,0 +1,52 @@
+---
+title: "Correlated t-test"
+author: "Giovanni d'Ario"
+date: "May 10, 2015"
+output: html_document
+---
+
+Simulation settings: samples of 10 observations each, with variable amounts of correlation ($\rho$ = 0, 0.05, 0.2, 0.5). We generate samples from a multivariate normal and compute the p-value from a t-test. the following function returns the vectors of p-values.
+
+```{r}
+correlated_t_test <- function(rho=0.1, nsamples=10, B=10000) {
+  S <- matrix(rho, nrow = nsamples, ncol = nsamples)
+  diag(S) <- 1
+  
+  f <- function(i) {
+    x <- MASS::mvrnorm(n = 1, mu = rep(0, 10), Sigma = S)
+    y <- MASS::mvrnorm(n = 1, mu = rep(0, 10), Sigma = S)
+    t.test(x, y)$p.val
+  }
+  
+  p <- sapply(1:B, f)
+  p
+}
+```
+
+## Case 1: $\rho = 0$
+
+```{r, cache=TRUE}
+p <- correlated_t_test(rho = 0)
+hist(p)
+```
+
+## Case 2: $\rho = 0.05$
+
+```{r, cache=TRUE}
+p <- correlated_t_test(rho = 0.05)
+hist(p)
+```
+
+## Case 2: $\rho = 0.2$
+
+```{r, cache=TRUE}
+p <- correlated_t_test(rho = 0.2)
+hist(p)
+```
+
+## Case 2: $\rho = 0.5$
+
+```{r, cache=TRUE}
+p <- correlated_t_test(rho = 0.5)
+hist(p)
+```

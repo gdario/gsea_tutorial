@@ -1,0 +1,65 @@
+Gene Set Enrichment Analysis. Friend or Foe?
+========================================================
+author: Giovanni d'Ario
+date: 10-05-2015
+
+Let's start simple: the t-test
+========================================================
+
+Before jumping into GS(E)A, let's take a look at something simpler: the t-test
+
+**LQN (Little Nasty Quiz)**
+
+What are the main requirements of a t-test? Can you mention at least two?
+Which one is the **most** important?
+
+Let's simulate
+========================================================
+We create a simple function to generate samples for a t-test
+
+```{r}
+correlated_t_test <- function(rho=0.1, nsamples=10, B=10000) {
+  # Covariance matrix
+  S <- matrix(rho, nrow = nsamples, ncol = nsamples)
+  diag(S) <- 1
+  f <- function(i) {
+    x <- MASS::mvrnorm(n = 1, mu = rep(0, 10), Sigma = S)
+    y <- MASS::mvrnorm(n = 1, mu = rep(0, 10), Sigma = S)
+    t.test(x, y)$p.val
+  }
+  p <- sapply(1:B, f)
+  p
+}
+```
+
+First case: no correlation
+========================================================
+
+```{r, cache=TRUE, width=10}
+p <- correlated_t_test(rho = 0)
+hist(p)
+```
+
+Second case: correlation = 0.05
+========================================================
+
+```{r, cache=TRUE, width=10}
+p <- correlated_t_test(rho = 0.05)
+hist(p)
+```
+
+Second case: correlation = 0.2
+========================================================
+
+```{r, cache=TRUE, width=10}
+p <- correlated_t_test(rho = 0.2)
+hist(p)
+```
+
+Second case: correlation = 0.5
+========================================================
+
+```{r, cache=TRUE, width = 10}
+p <- correlated_t_test(rho = 0.5)
+hist(p)
+```
